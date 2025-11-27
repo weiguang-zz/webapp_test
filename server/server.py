@@ -101,7 +101,12 @@ async def broadcast_to_room(room_id, data):
 
 async def main():
     # Run in insecure mode
-    async with websockets.serve(handler, "0.0.0.0", 8090):
+    async with websockets.serve(
+        handler,
+        "0.0.0.0",
+        8090,
+        create_protocol=websockets.server.WebSocketServerProtocol
+    ):
         print("WebSocket server started on port 8090 (ws://)")
         await asyncio.Future()  # run forever
 
