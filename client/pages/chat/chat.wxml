@@ -1,0 +1,41 @@
+<view class="container">
+  <view wx:if="{{!hasUserInfo}}" class="login-overlay">
+    <view class="login-card">
+      <view class="login-title">Welcome to Chat</view>
+      
+      <button class="avatar-wrapper" open-type="chooseAvatar" bindchooseavatar="onChooseAvatar">
+        <image class="avatar-preview" src="{{tempAvatarUrl || 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0'}}"></image>
+      </button>
+      <text class="tip-text">Tap to set avatar</text>
+
+      <input type="nickname" class="nickname-input" placeholder="Enter your nickname" bindchange="onNicknameChange" />
+      
+      <button class="login-btn" bindtap="submitLogin">Join Chat</button>
+    </view>
+  </view>
+
+  <scroll-view class="chat-area" scroll-y scroll-top="{{scrollTop}}" scroll-with-animation>
+    <block wx:for="{{messages}}" wx:key="index">
+      <!-- System Message -->
+      <view wx:if="{{!item.sender}}" class="system-message">
+        <text>{{item.text}}</text>
+      </view>
+      
+      <!-- User Message -->
+      <view wx:else class="message-item {{item.sender.userId === userId ? 'my-message' : 'other-message'}}">
+        <image class="avatar" src="{{item.sender.avatarUrl}}" mode="aspectFill"></image>
+        <view class="content-wrapper">
+          <text class="nickname">{{item.sender.nickName}}</text>
+          <view class="message-bubble">
+            <text class="message-text">{{item.text}}</text>
+          </view>
+        </view>
+      </view>
+    </block>
+  </scroll-view>
+
+  <view class="input-area">
+    <input class="input" value="{{inputValue}}" bindinput="onInput" placeholder="Type a message..." confirm-type="send" bindconfirm="sendMessage"/>
+    <button class="send-btn" bindtap="sendMessage">Send</button>
+  </view>
+</view>

@@ -1,0 +1,12 @@
+<view class="container">
+  <view class="title">WeChat Chat</view>
+  
+  <view class="action-area">
+    <button class="btn create-btn" bindtap="createRoom">Create New Room</button>
+    
+    <view class="divider">OR</view>
+    
+    <input class="input" placeholder="Enter Room ID" bindinput="onInput" type="number" />
+    <button class="btn join-btn" bindtap="joinRoom">Join Room</button>
+  </view>
+</view>

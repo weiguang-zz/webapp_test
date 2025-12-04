@@ -1,0 +1,40 @@
+.container {
+  padding: 50rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.title {
+  font-size: 48rpx;
+  font-weight: bold;
+  margin-bottom: 100rpx;
+}
+
+.action-area {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.input {
+  border: 1px solid #ccc;
+  padding: 20rpx;
+  width: 80%;
+  border-radius: 10rpx;
+  margin-bottom: 30rpx;
+  text-align: center;
+}
+
+.btn {
+  width: 80%;
+  margin-bottom: 30rpx;
+  background-color: #07c160;
+  color: white;
+}
+
+.divider {
+  margin: 30rpx 0;
+  color: #888;
+}
