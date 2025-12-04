@@ -61,7 +61,7 @@ async def handle_join(websocket, payload, current_room_id):
 
     rooms[room_id].add(websocket)
     clients[websocket] = user_info
-    print(f"Client joined room {room_id} as {user_info.get('nickName', 'Unknown')}")
+    print(f"Client joined room {room_id} with info: {user_info}")
     
     # Send history
     if history[room_id]:
@@ -101,7 +101,7 @@ async def handle_message(websocket, payload, room_id):
     text = payload.get('text')
     sender_info = clients.get(websocket, {'nickName': 'Unknown', 'userId': 'unknown'})
     
-    print(f"Message in {room_id}: {text}")
+    print(f"Message in {room_id}: {text}, sender: {sender_info}")
     
     message_data = {
         'text': text,
