@@ -48,7 +48,8 @@ async def handle_join(websocket, payload, current_room_id):
     user_info = payload.get('userInfo', {})
     
     if not room_id:
-        return current_room_id
+        return current_room_id、
+
 
     # Leave previous room if any
     if current_room_id:
