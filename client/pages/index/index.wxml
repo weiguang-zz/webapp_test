@@ -1,12 +1,16 @@
 <view class="container">
-  <view class="title">WeChat Chat</view>
+  <view class="title">微信聊天室</view>
   
   <view class="action-area">
-    <button class="btn create-btn" bindtap="createRoom">Create New Room</button>
+    <view class="section-title">创建房间</view>
+    <input class="input" placeholder="请输入房间号 (必填)" bindinput="onInput" />
+    <input class="input" placeholder="房间密码 (选填)" bindinput="onPasswordInput" />
+    <button class="btn create-btn" bindtap="createRoom">创建房间</button>
     
-    <view class="divider">OR</view>
+    <view class="divider"></view>
     
-    <input class="input" placeholder="Enter Room ID" bindinput="onInput" type="number" />
-    <button class="btn join-btn" bindtap="joinRoom">Join Room</button>
+    <view class="section-title">加入房间</view>
+    <input class="input" placeholder="请输入房间号" bindinput="onJoinInput" />
+    <button class="btn join-btn" bindtap="joinRoom">加入房间</button>
   </view>
 </view>

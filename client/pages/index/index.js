@@ -2,7 +2,9 @@ const app = getApp()
 
 Page({
     data: {
-        roomId: ''
+        roomId: '',
+        joinRoomId: '',
+        password: ''
     },
 
     onLoad() {
@@ -14,23 +16,41 @@ Page({
         })
     },
 
-    createRoom() {
-        const roomId = Math.floor(1000 + Math.random() * 9000).toString();
-        wx.navigateTo({
-            url: `/pages/chat/chat?roomId=${roomId}`
+    onJoinInput(e) {
+        this.setData({
+            joinRoomId: e.detail.value
         })
     },
 
-    joinRoom() {
+    onPasswordInput(e) {
+        this.setData({
+            password: e.detail.value
+        })
+    },
+
+    createRoom() {
         if (!this.data.roomId) {
             wx.showToast({
-                title: 'Please enter Room ID',
+                title: '请输入房间号',
                 icon: 'none'
             })
             return
         }
         wx.navigateTo({
-            url: `/pages/chat/chat?roomId=${this.data.roomId}`
+            url: `/pages/chat/chat?roomId=${this.data.roomId}&password=${this.data.password}&action=create`
+        })
+    },
+
+    joinRoom() {
+        if (!this.data.joinRoomId) {
+            wx.showToast({
+                title: '请输入房间号',
+                icon: 'none'
+            })
+            return
+        }
+        wx.navigateTo({
+            url: `/pages/chat/chat?roomId=${this.data.joinRoomId}&action=join`
         })
     }
 })

@@ -14,7 +14,8 @@ Page({
 
     onLoad(options) {
         this.setData({
-            roomId: options.roomId
+            roomId: options.roomId,
+            password: options.password || ''
         })
 
         wx.setNavigationBarTitle({
@@ -108,8 +109,8 @@ Page({
     connectSocket() {
         const that = this
         // Replace with your local IP if testing on device
-        const url = 'wss://abc.tongchengxuanshang.com'
-        // const url = 'ws://172.16.0.103:8090'
+        // const url = 'wss://abc.tongchengxuanshang.com'
+        const url = 'ws://172.16.0.103:8090'
 
         wx.connectSocket({
             url: url
@@ -118,20 +119,7 @@ Page({
         wx.onSocketOpen(() => {
             console.log('WebSocket Connected')
             that.setData({ socketOpen: true })
-
-            // Join room with user info
-            const joinPayload = {
-                roomId: that.data.roomId,
-                userInfo: {
-                    ...that.data.userInfo,
-                    userId: that.data.userId
-                }
-            }
-
-            that.send({
-                type: 'join',
-                payload: joinPayload
-            })
+            that.sendJoin()
         })
 
         wx.onSocketMessage((res) => {
@@ -145,6 +133,12 @@ Page({
                         messages: historyMessages,
                         scrollTop: historyMessages.length * 1000
                     })
+                    // Successful join, cache password if used
+                    if (that.data.password) {
+                        const roomPasswords = wx.getStorageSync('roomPasswords') || {}
+                        roomPasswords[that.data.roomId] = that.data.password
+                        wx.setStorageSync('roomPasswords', roomPasswords)
+                    }
                 } else if (data.type === 'message' || data.type === 'system') {
                     const messages = that.data.messages
                     messages.push(data.payload)
@@ -152,6 +146,44 @@ Page({
                         messages: messages,
                         scrollTop: messages.length * 1000 // Auto scroll to bottom
                     })
+                } else if (data.type === 'error') {
+                    if (data.payload.text === '需要密码') {
+                        // Check cache first
+                        const roomPasswords = wx.getStorageSync('roomPasswords') || {}
+                        const cachedPassword = roomPasswords[that.data.roomId]
+
+                        // If we haven't tried the cached password yet, try it
+                        if (cachedPassword && that.data.password !== cachedPassword) {
+                            that.setData({ password: cachedPassword })
+                            that.sendJoin()
+                            return
+                        }
+
+                        // Otherwise prompt user
+                        wx.showModal({
+                            title: '请输入密码',
+                            content: '该房间需要密码',
+                            editable: true,
+                            placeholderText: '密码',
+                            success: (res) => {
+                                if (res.confirm) {
+                                    that.setData({ password: res.content })
+                                    that.sendJoin()
+                                } else {
+                                    wx.navigateBack()
+                                }
+                            }
+                        })
+                    } else {
+                        wx.showToast({
+                            title: data.payload.text,
+                            icon: 'none',
+                            duration: 2000
+                        })
+                        setTimeout(() => {
+                            wx.navigateBack()
+                        }, 2000)
+                    }
                 }
             } catch (e) {
                 console.error(e)
@@ -165,6 +197,23 @@ Page({
 
         wx.onSocketError((err) => {
             console.error('WebSocket Error', err)
+        })
+    },
+
+    sendJoin() {
+        const joinPayload = {
+            roomId: this.data.roomId,
+            password: this.data.password,
+            create: this.options.action === 'create',
+            userInfo: {
+                ...this.data.userInfo,
+                userId: this.data.userId
+            }
+        }
+
+        this.send({
+            type: 'join',
+            payload: joinPayload
         })
     },
 
